@@ -8,7 +8,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    'delete_expired_timepictures-10-minutes': {
+    'delete_expired_timepictures-every-10-minutes': {
         'task': 'core.tasks.delete_expired_timepictures',
         'schedule': 10*60,
     }
