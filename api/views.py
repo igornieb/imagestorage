@@ -15,10 +15,11 @@ class PictureList(ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Picture.objects.filter(owner=self.request.user)
+        return Picture.objects.filter(owner__user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        account=Account.objects.get(user=self.request.user)
+        serializer.save(owner=account)
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -87,7 +88,7 @@ class TimePictureList(ListAPIView):
     serializer_class = TimePictureSerializer
 
     def get_queryset(self):
-        pictures = TimeExpiringPicture.objects.filter(picture__owner=self.request.user, expires__gt=timezone.now())
+        pictures = TimeExpiringPicture.objects.filter(picture__owner__user=self.request.user, expires__gt=timezone.now())
         return pictures
 
 
