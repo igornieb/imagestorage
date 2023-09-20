@@ -56,7 +56,7 @@ class PictureDetails(APIView):
                                         "object": picture})
             if picture.owner.tier.sizes_allowed.contains(height_model):
                 image = Image.open(picture.img)
-                image.thumbnail((image.width, height), Image.ANTIALIAS)
+                image.thumbnail((image.width, height), Image.LANCZOS)
                 response = HttpResponse(content_type='image/jpg')
                 if image.mode in ("RGBA", "P"):
                     image = image.convert("RGB")
