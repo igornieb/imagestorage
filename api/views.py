@@ -18,7 +18,7 @@ class PictureList(ListCreateAPIView):
         return Picture.objects.filter(owner__user=self.request.user)
 
     def perform_create(self, serializer):
-        account=Account.objects.get(user=self.request.user)
+        account = Account.objects.get(user=self.request.user)
         serializer.save(owner=account)
 
     def get_serializer_class(self):
@@ -46,6 +46,7 @@ class PictureDetails(APIView):
         except Picture.DoesNotExist:
             raise Http404
 
+    @method_decorator(cache_page(10))
     def get(self, request, pk, height=None):
         # returns image in given size
         picture = self.get_object(pk)
@@ -88,7 +89,8 @@ class TimePictureList(ListAPIView):
     serializer_class = TimePictureSerializer
 
     def get_queryset(self):
-        pictures = TimeExpiringPicture.objects.filter(picture__owner__user=self.request.user, expires__gt=timezone.now())
+        pictures = TimeExpiringPicture.objects.filter(picture__owner__user=self.request.user,
+                                                      expires__gt=timezone.now())
         return pictures
 
 
@@ -99,8 +101,7 @@ class TimePictureDetails(APIView):
         except TimeExpiringPicture.DoesNotExist:
             raise Http404
 
+    @method_decorator(cache_page(5))
     def get(self, request, pk):
         time_picture = self.get_object(pk)
         return HttpResponse(time_picture.picture.img, content_type="image/png")
-
-# TODO cache
