@@ -65,12 +65,6 @@ class TimeExpiringPicture(models.Model):
     def get_absolute_url(self):
         return reverse("timelink", kwargs={'pk': self.pk})
 
-    def time_left(self):
-        time_left = (self.expires - timezone.now()).total_seconds()
-        if time_left < 0:
-            return "Expired"
-        return round(time_left)
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     picture = models.ForeignKey(Picture, on_delete=models.CASCADE)
     created = models.DateTimeField(default=timezone.now)
