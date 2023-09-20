@@ -4,6 +4,7 @@ from core.models import Picture, TimeExpiringPicture
 
 class PictureSerializer(serializers.ModelSerializer):
     urls = serializers.URLField(source='get_absolute_url', read_only=True)
+    owner = serializers.CharField(source='owner.user.username')
 
     class Meta:
         model = Picture
@@ -13,7 +14,7 @@ class PictureSerializer(serializers.ModelSerializer):
 class PictureAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = Picture
-        fields = ['name','img']
+        fields = ['name', 'img']
 
 
 class TimePictureSerializer(serializers.ModelSerializer):
