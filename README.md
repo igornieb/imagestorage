@@ -3,7 +3,7 @@
 ## Set-up
 You will need to install docker.
 
-Run terminal in project directory and type `docker compose up` command. Django server will start on port `8000`.
+Run terminal in project directory and type `docker-compose up` command. Django server will start on port `8000`.
 
 ## Tests
 
