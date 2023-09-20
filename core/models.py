@@ -18,7 +18,7 @@ class FileHeight(models.Model):
 
 class Tier(models.Model):
     def __str__(self):
-        return f"{self.name}, {self.sizes_allowed}"
+        return f"{self.name}, {[str(size) for size in self.sizes_allowed.all()]}"
 
     name = models.CharField(max_length=100, unique=True)
     sizes_allowed = models.ManyToManyField(FileHeight)
@@ -31,7 +31,7 @@ class Account(AbstractUser):
     def __str__(self):
         return f"{self.username} - {self.tier}"
 
-    tier = models.ForeignKey(Tier, on_delete=models.CASCADE)
+    tier = models.ForeignKey(Tier, on_delete=models.CASCADE, default=1)
 
 
 class Picture(models.Model):
@@ -42,14 +42,14 @@ class Picture(models.Model):
         return f"user-pictures/{self.owner.username}/{filename}"
 
     def get_absolute_url(self):
-        # get possible res, create urls
         heights = self.owner.tier.sizes_allowed.all()
-        links = []
-        for value in heights:
-            links.append(reverse("picture-details", kwargs={'pk': self.pk, "height": value.size}))
-        if self.owner.tier.allow_original:
-            links.append(reverse("picture-details", kwargs={'pk': self.pk}))
-        return links
+        pass
+        # links = []
+        # for value in heights:
+        #     links.append(reverse("picture-details", kwargs={'pk': self.pk, "height": value.size}))
+        # if self.owner.tier.allow_original:
+        #     links.append(reverse("picture-details", kwargs={'pk': self.pk}))
+        # return links
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
