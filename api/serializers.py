@@ -22,4 +22,4 @@ class TimePictureSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TimeExpiringPicture
-        fields = ['url', 'picture', 'time']
+        fields = ['url', 'picture', 'time', 'created', 'expires']
