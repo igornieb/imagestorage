@@ -9,7 +9,7 @@ class TierAdmin(admin.ModelAdmin):
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ('user', 'tier',)
+    list_display = ('username', 'tier',)
 
 
 @admin.register(Picture)
