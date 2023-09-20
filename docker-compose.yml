@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=imagestorage
+      - POSTGRES_USER=imagestorage-admin
+      - POSTGRES_PASSWORD=admin-imagestorage
+  redis:
+    image: redis
+    container_name: redis
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000 && celery -A imagestorage beat -l INFO
+    entrypoint: /code/entrypoint.sh
+    environment:
+      - SECRET_KEY=my_verylong_secret_key=django--l*j=!pe!cz^p3@bglma!$^rfp6=n-7$)z4=-r1v6%e*#ar^l=4
+      - DEBUG=1
+      - DB_HOST=postgres
+      - DB_NAME=imagestorage
+      - DB_USER=imagestorage-admin
+      - DB_PASS=admin-imagestorage
+      - ACCESS_TOKEN_LIFETIME=20
+      - REFRESH_TOKEN_LIFETIME=1
+    volumes:
+      - .:/code/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A imagestorage worker -l INFO
+    volumes:
+      - .:/code/
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=imagestorage
+      - DB_USER=imagestorage-admin
+      - DB_PASS=admin-imagestorage
+    depends_on:
+      - postgres
+      - redis
+      - web
