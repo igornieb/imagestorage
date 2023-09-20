@@ -43,13 +43,12 @@ class Picture(models.Model):
 
     def get_absolute_url(self):
         heights = self.owner.tier.sizes_allowed.all()
-        pass
-        # links = []
-        # for value in heights:
-        #     links.append(reverse("picture-details", kwargs={'pk': self.pk, "height": value.size}))
-        # if self.owner.tier.allow_original:
-        #     links.append(reverse("picture-details", kwargs={'pk': self.pk}))
-        # return links
+        links = []
+        for value in heights:
+            links.append(reverse("picture-details", kwargs={'pk': self.pk, "height": value.size}))
+        if self.owner.tier.allow_original:
+            links.append(reverse("picture-details", kwargs={'pk': self.pk}))
+        return links
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
