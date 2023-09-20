@@ -10,6 +10,12 @@ class PictureSerializer(serializers.ModelSerializer):
         fields = ['owner', 'name', 'urls']
 
 
+class PictureAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Picture
+        fields = ['name','img']
+
+
 class TimePictureSerializer(serializers.ModelSerializer):
     url = serializers.URLField(source='get_absolute_url', read_only=True)
     picture = PictureSerializer(read_only=True)
