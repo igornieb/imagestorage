@@ -1,6 +1,6 @@
 import uuid
 from datetime import timedelta
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
@@ -26,20 +26,20 @@ class Tier(models.Model):
     allow_creating_time_expiring_link = models.BooleanField(default=False)
 
 
-class Account(AbstractUser):
-
+class Account(models.Model):
     def __str__(self):
-        return f"{self.username} - {self.tier}"
+        return f"{self.user.username} - {self.tier}"
 
-    tier = models.ForeignKey(Tier, on_delete=models.CASCADE, default=1)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    tier = models.ForeignKey(Tier, on_delete=models.CASCADE)
 
 
 class Picture(models.Model):
     def __str__(self):
-        return f"{self.name} - {self.owner.username}"
+        return f"{self.name} - {self.owner}"
 
     def upload_to(self, filename):
-        return f"user-pictures/{self.owner.username}/{filename}"
+        return f"user-pictures/{self.owner.user.username}/{filename}"
 
     def get_absolute_url(self):
         heights = self.owner.tier.sizes_allowed.all()
