@@ -1,9 +1,12 @@
 import uuid
 from datetime import timedelta
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+
+from core.validators import validate_time_allowed
 
 
 class FileHeight(models.Model):
@@ -20,11 +23,10 @@ class Tier(models.Model):
     name = models.CharField(max_length=100, unique=True)
     sizes_allowed = models.ManyToManyField(FileHeight)
     allow_original = models.BooleanField(default=False)
-    allow_link = models.BooleanField(default=False)
+    allow_creating_time_expiring_link = models.BooleanField(default=False)
 
 
-class Account(models.Model):
-    # TODO extend base user
+class Account(AbstractUser):
 
     def __str__(self):
         return f"{self.username} - {self.tier}"
@@ -34,13 +36,13 @@ class Account(models.Model):
 
 class Picture(models.Model):
     def __str__(self):
-        return f"{self.name} - {self.owner}"
+        return f"{self.name} - {self.owner.username}"
 
     def upload_to(self, filename):
         return f"user-pictures/{self.owner.username}/{filename}"
 
     def get_absolute_url(self):
-        # get posible res, create urls
+        # get possible res, create urls
         heights = self.owner.tier.sizes_allowed.all()
         links = []
         for value in heights:
